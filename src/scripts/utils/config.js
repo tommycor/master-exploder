@@ -6,19 +6,32 @@ var config = {
 	
 	canvas: {
 		element : document.getElementById('container'),
-		color : 0x666666
+		color : 0x333333
 	},
 	
 	camera: {
-		position : new THREE.Vector3(0, 0, 50),
-		target : new THREE.Vector3(0, 10, 0)
+		position : new THREE.Vector3(0, 0, 500),
+		target : new THREE.Vector3(0, 0, 0)
 	},
+
+	axisHelper: true,
 	
 	lights: {
 		ambient: {
 			color : 0xffffff
 		} 
 	},
+
+	particles: {
+		count: 10000
+	},
+
+	drawField: {
+		maxHeight: 400,
+		maxWidth: 400,
+		maxDepth: 500,
+		mitigator: .3
+	}
 	
 }
 

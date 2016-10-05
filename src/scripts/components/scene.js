@@ -39,9 +39,69 @@ module.exports = {
 		//// ADD CANVAS TO DOM
 		this.container.appendChild( this.renderer.domElement );
 
+		this.createParticles();
+
 		//// REGIST RENDERER
 		raf.register(this.render);
 		raf.start();
+	},
+
+	createParticles: function() {
+		// this.attributes = { size: { type: 'f', value: [] }	};
+
+		this.uniforms = {
+			map: { type: 't', value: THREE.ImageUtils.loadTexture("./assets/medias/smoke.png") }
+		}
+		this.geometry = new THREE.BufferGeometry();
+		this.vertices = new Float32Array( config.particles.count * 3 );
+		this.sizes = new Float32Array( config.particles.count );
+
+		let maxWidth  = config.drawField.maxWidth;
+		let maxHeight = config.drawField.maxHeight;
+		let maxDepth = config.drawField.maxDepth;
+
+		let stepX = maxWidth / config.particles.count;
+		let stepY = maxHeight / config.particles.count;
+		let stepZ = maxDepth / config.particles.count;
+
+		for( let i = 0 ; i < config.particles.count ; i++ ) {
+
+			let j = i - i * config.drawField.mitigator;
+
+			let width  = maxWidth - stepX * j;
+			let height = maxWidth - stepY * j;
+			let depth  = maxDepth - stepY * j;
+
+			let pX = Math.random() * ( width ) - width * .5;
+			let pY = Math.random() * ( height ) - height * .5;
+			let pZ = Math.random() * ( depth ) - depth * .5;
+
+			this.vertices[i * 3] = pX;
+			this.vertices[i * 3 + 1] = pY;
+			this.vertices[i * 3 + 2] = pZ;
+
+			this.sizes[ i ] = Math.random() * 5;
+		}
+
+		this.geometry.addAttribute( 'position', new THREE.BufferAttribute( this.vertices, 3 ) );
+
+		this.geometry.addAttribute( 'size', new THREE.BufferAttribute( this.sizes, 1 ) );
+
+		this.material = new THREE.ShaderMaterial( {
+			uniforms: this.uniforms,
+			transparent: true,
+			vertexShader: require('../shaders/particles.vertex.glsl'),
+			fragmentShader: require('../shaders/particles.fragment.glsl')
+		});
+
+		this.particleSystem = new THREE.Points( this.geometry, this.material );
+
+		this.scene.add(this.particleSystem);
+
+	},
+
+	resize: function() {
+		this.renderer.setSize(window.innerWidth, window.innerHeight);		
 	},
 
 	render: function() {
