@@ -31,6 +31,13 @@ var config = {
 		maxWidth: 400,
 		maxDepth: 500,
 		mitigator: .3
+	},
+
+	plane: {
+		width: 500,
+		height: 500,
+		wireframe: true,
+
 	}
 	
 }

@@ -4,11 +4,19 @@ const THREE = threejs();
 import config 	from '../utils/config';
 import raf 		from '../utils/raf';
 
+import plane 		from './planeMouseDetector.js';
+
 module.exports = {
 
 	init: function() {
 
 		this.render = this.render.bind(this);
+		this.onClick = this.onClick.bind(this);
+		this.clock = new THREE.Clock()
+
+		this.plane = null;
+		this.explosionsPos = [];
+		this.explosionsTime = [];
 
 		//// INIT
 		this.scene = new THREE.Scene();
@@ -42,15 +50,17 @@ module.exports = {
 		this.createParticles();
 
 		//// REGIST RENDERER
-		raf.register(this.render);
+		raf.register( this.render );
 		raf.start();
+
+		window.addEventListener( 'click', this.onClick );
 	},
 
 	createParticles: function() {
-		// this.attributes = { size: { type: 'f', value: [] }	};
-
 		this.uniforms = {
-			map: { type: 't', value: THREE.ImageUtils.loadTexture("./assets/medias/smoke.png") }
+			map: { type: 't', value: THREE.ImageUtils.loadTexture("./assets/medias/smoke.png") },
+			explosionsTime: { type: 'fv1', value: [] },
+			explosionsTime: { type: 'v2v', value: [] }
 		}
 		this.geometry = new THREE.BufferGeometry();
 		this.vertices = new Float32Array( config.particles.count * 3 );
@@ -98,6 +108,16 @@ module.exports = {
 
 		this.scene.add(this.particleSystem);
 
+
+		this.plane = plane.init();
+
+		this.scene.add( this.plane );
+	},
+
+	onClick: function( event ) {
+		this.explosionsPos.push( new THREE.Vector2( event.clientX, event.clientY ) );
+
+		this.explosionsTime.push( 0 );
 	},
 
 	resize: function() {
@@ -105,9 +125,16 @@ module.exports = {
 	},
 
 	render: function() {
+		let delta = this.clock.getDelta();
+
+		for( let i = 0 ; i < this.explosionsTime.length ; i++ ) {
+			this.explosionsTime[i] += delta;
+		}
+
+		this.uniforms.explosionsTime = this.explosionsTime;
+		this.uniforms.explosionsPos = this.explosionsPos;
 
 		this.renderer.render(this.scene, this.camera);
-
 	}
 
 };
