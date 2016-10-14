@@ -12,7 +12,9 @@ module.exports = function() {
 
 	this.geometry = new THREE.PlaneGeometry( config.plane.width, config.plane.height, 1, 1 );
 	this.material = new THREE.MeshBasicMaterial( {
-		wireframe: config.plane.wireframe,
+		wireframe: 		config.plane.wireframe,
+		opacity: 		config.plane.opacity,
+		transparent: 	config.plane.opacity == 1 ? false : true
 	});
 	this.mesh = new THREE.Mesh( this.geometry, this.material );
 	this.mesh.position.set(0, 0, 0);

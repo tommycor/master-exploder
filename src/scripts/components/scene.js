@@ -3,6 +3,7 @@ const THREE = threejs();
 
 import config 				from '../utils/config';
 import raf 					from '../utils/raf';
+import mapper 				from '../utils/mapper';
 
 import plane 				from './planeMouseDetector.js';
 
@@ -13,8 +14,11 @@ module.exports = {
 
 		this.render  		= this.render.bind(this);
 		this.onClick 		= this.onClick.bind(this);
-		this.resize  		= this.resize.bind(this);
-		this.clock   		= new THREE.Clock()
+		this.onResize  		= this.onResize.bind(this);
+		this.onMove			= this.onMove.bind(this);
+		this.clock   		= new THREE.Clock();
+		this.cameraPos		= new THREE.Vector3( config.camera.position.x, config.camera.position.y, config.camera.position.z );
+		this.currentCameraPos = new THREE.Vector3( this.cameraPos.x, this.cameraPos.y, this.cameraPos.z );
 
 		this.plane   		= null;
 		this.explosionsPos 	= [];
@@ -63,15 +67,16 @@ module.exports = {
 		//// REGIST RENDERER
 		raf.register( this.render );
 		raf.start();
-		this.resize();
+		this.onResize();
 
 		window.addEventListener( 'click', this.onClick );
-		window.addEventListener( 'resize', this.resize );
+		window.addEventListener( 'resize', this.onResize );
+		window.addEventListener( 'mousemove', this.onMove );
 	},
 
 	createParticles: function() {
 		this.uniforms = {
-			map: { type: 't', value: THREE.ImageUtils.loadTexture("./assets/medias/smoke.png") },
+			map: { type: 't', value: THREE.ImageUtils.loadTexture("./assets/medias/smoke_2.png") },
 			explosionsPos: { type: 'v2v', value: this.explosionsPos },
 			explosionsTime: { type: 'fv1', value: this.explosionsTime },
 			explosionsIndex: { type: 'i', value: this.explosionsIndex },
@@ -138,7 +143,12 @@ module.exports = {
 		this.uniforms.explosionsIndex.value = this.explosionsIndex;
 	},
 
-	resize: function() {
+	onMove: function( event ) {
+		this.cameraPos.x = event.clientX - this.halfWidth;
+		this.cameraPos.y = event.clientY - this.halfHeight;
+	},
+
+	onResize: function() {
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
 
 		this.halfWidth = window.innerWidth * .5;
@@ -154,6 +164,12 @@ module.exports = {
 
 		this.uniforms.explosionsTime.value = this.explosionsTime;
 		this.uniforms.explosionsPos.value = this.explosionsPos;
+
+		this.currentCameraPos.x += ( ( this.cameraPos.x * .7) - this.currentCameraPos.x ) * 0.01;
+		this.currentCameraPos.y += ( ( this.cameraPos.y * .8) - this.currentCameraPos.y ) * 0.01;
+
+		this.camera.position.set( this.currentCameraPos.x, this.currentCameraPos.y, this.currentCameraPos.z );
+	    this.camera.lookAt(config.camera.target);
 
 		this.renderer.render(this.scene, this.camera);
 	}

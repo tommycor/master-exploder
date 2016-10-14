@@ -14,7 +14,7 @@ var config = {
 		target : new THREE.Vector3(0, 0, 0)
 	},
 
-	axisHelper: true,
+	axisHelper: false,
 	
 	lights: {
 		ambient: {
@@ -24,13 +24,13 @@ var config = {
 
 	particles: {
 		count: 100000,
-		maxExplosions: 50
+		maxExplosions: 100
 	},
 
 	drawField: {
-		maxHeight: 400,
-		maxWidth: 400,
-		maxDepth: 20,
+		maxHeight: 600,
+		maxWidth: 600,
+		maxDepth: 200,
 		mitigator: .3
 	},
 
@@ -38,7 +38,7 @@ var config = {
 		width: 500,
 		height: 500,
 		wireframe: true,
-
+		opacity: 0,
 	}
 	
 }

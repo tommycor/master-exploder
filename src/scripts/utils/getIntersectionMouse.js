@@ -15,8 +15,8 @@ function getIntersectionMouse(event, mesh, camera)
 
     if(intersect.length >= 1)
         return {
-    		x: intersect[0].point.x, 
-    		y: intersect[0].point.y, 
+    		x: intersect[0].point.x,
+    		y: intersect[0].point.y,
     		z: intersect[0].point.z
         };
 }

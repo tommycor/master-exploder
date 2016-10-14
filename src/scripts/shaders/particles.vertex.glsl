@@ -1,12 +1,12 @@
-#define MAX_EXP 100
-#define MAX_DIST 100.
+#define MAX_EXP 200
+#define MAX_DIST 200.
 #define MAX_Time 10.
 
-#define EXP_TIME_POWER 1.
+#define EXP_TIME_POWER 2.
 #define EXP_TIME_VELOCITY 2.
 
-#define EXP_DIST_POWER 5.
-#define EXP_DIST_VELOCITY .05
+#define EXP_DIST_POWER 2.
+#define EXP_DIST_VELOCITY .04 //smallest number = bigger explosion
 
 uniform float explosionsTime[ MAX_EXP ];
 uniform vec2 explosionsPos[ MAX_EXP ];
