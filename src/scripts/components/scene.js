@@ -1,28 +1,39 @@
-import threejs from "three-js";
+import threejs 				from "three-js";
 const THREE = threejs();
 
-import config 	from '../utils/config';
-import raf 		from '../utils/raf';
+import config 				from '../utils/config';
+import raf 					from '../utils/raf';
 
-import plane 		from './planeMouseDetector.js';
+import plane 				from './planeMouseDetector.js';
+
 
 module.exports = {
 
 	init: function() {
 
-		this.render = this.render.bind(this);
-		this.onClick = this.onClick.bind(this);
-		this.clock = new THREE.Clock()
+		this.render  		= this.render.bind(this);
+		this.onClick 		= this.onClick.bind(this);
+		this.resize  		= this.resize.bind(this);
+		this.clock   		= new THREE.Clock()
 
-		this.plane = null;
-		this.explosionsPos = [];
+		this.plane   		= null;
+		this.explosionsPos 	= [];
 		this.explosionsTime = [];
 
+		// KEEP THIS SHIT
+		// ADD VALUES IN A PREDEFINED LENGTH ARRAY
+		// POP THE LASTS AND UNSHIFT THE NEW ONES
+		for( let i = 0 ; i < config.particles.maxExplosions - 1 ; i++ ) {
+			this.explosionsPos[i]  = new THREE.Vector2( 0, 0, 0 );
+			this.explosionsTime[i] = 100;
+			this.explosionsIndex   = 0;
+		}
+
 		//// INIT
-		this.scene = new THREE.Scene();
+		this.scene 	   = new THREE.Scene();
 		this.container = config.canvas.element;
 
-		this.camera = new THREE.PerspectiveCamera(45, this.ratio, 15, 2000);
+		this.camera 		   = new THREE.PerspectiveCamera(45, this.ratio, 15, 2000);
 	    this.camera.position.x = config.camera.position.x;
 	    this.camera.position.y = config.camera.position.y;
 	    this.camera.position.z = config.camera.position.z;
@@ -52,15 +63,18 @@ module.exports = {
 		//// REGIST RENDERER
 		raf.register( this.render );
 		raf.start();
+		this.resize();
 
 		window.addEventListener( 'click', this.onClick );
+		window.addEventListener( 'resize', this.resize );
 	},
 
 	createParticles: function() {
 		this.uniforms = {
 			map: { type: 't', value: THREE.ImageUtils.loadTexture("./assets/medias/smoke.png") },
-			explosionsTime: { type: 'fv1', value: [] },
-			explosionsTime: { type: 'v2v', value: [] }
+			explosionsPos: { type: 'v2v', value: this.explosionsPos },
+			explosionsTime: { type: 'fv1', value: this.explosionsTime },
+			explosionsIndex: { type: 'i', value: this.explosionsIndex },
 		}
 		this.geometry = new THREE.BufferGeometry();
 		this.vertices = new Float32Array( config.particles.count * 3 );
@@ -85,6 +99,7 @@ module.exports = {
 			let pX = Math.random() * ( width ) - width * .5;
 			let pY = Math.random() * ( height ) - height * .5;
 			let pZ = Math.random() * ( depth ) - depth * .5;
+			// let pZ = 0;
 
 			this.vertices[i * 3] = pX;
 			this.vertices[i * 3 + 1] = pY;
@@ -108,31 +123,37 @@ module.exports = {
 
 		this.scene.add(this.particleSystem);
 
-
-		this.plane = plane.init();
-
-		this.scene.add( this.plane );
+		this.plane = new plane();
+		this.scene.add( this.plane.mesh );
 	},
 
 	onClick: function( event ) {
-		this.explosionsPos.push( new THREE.Vector2( event.clientX, event.clientY ) );
 
-		this.explosionsTime.push( 0 );
+		let position = this.plane.getIntersection(event, this.camera);
+
+		this.explosionsPos[ this.explosionsIndex ] = new THREE.Vector2( position.x, position.y );
+		this.explosionsTime[ this.explosionsIndex ] = 0;
+
+		this.explosionsIndex++;
+		this.uniforms.explosionsIndex.value = this.explosionsIndex;
 	},
 
 	resize: function() {
-		this.renderer.setSize(window.innerWidth, window.innerHeight);		
+		this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+		this.halfWidth = window.innerWidth * .5;
+		this.halfHeight = window.innerHeight * .5;
 	},
 
 	render: function() {
 		let delta = this.clock.getDelta();
 
-		for( let i = 0 ; i < this.explosionsTime.length ; i++ ) {
+		for( let i = 0 ; i < this.explosionsIndex ; i++ ) {
 			this.explosionsTime[i] += delta;
 		}
 
-		this.uniforms.explosionsTime = this.explosionsTime;
-		this.uniforms.explosionsPos = this.explosionsPos;
+		this.uniforms.explosionsTime.value = this.explosionsTime;
+		this.uniforms.explosionsPos.value = this.explosionsPos;
 
 		this.renderer.render(this.scene, this.camera);
 	}

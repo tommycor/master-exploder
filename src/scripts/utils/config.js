@@ -23,13 +23,14 @@ var config = {
 	},
 
 	particles: {
-		count: 10000
+		count: 100000,
+		maxExplosions: 50
 	},
 
 	drawField: {
 		maxHeight: 400,
 		maxWidth: 400,
-		maxDepth: 500,
+		maxDepth: 20,
 		mitigator: .3
 	},
 
