@@ -76,7 +76,7 @@ module.exports = {
 
 	createParticles: function() {
 		this.uniforms = {
-			map: { type: 't', value: THREE.ImageUtils.loadTexture("./assets/medias/smoke_2.png") },
+			map: { type: 't', value: THREE.ImageUtils.loadTexture(config.particles.texture) },
 			explosionsPos: { type: 'v2v', value: this.explosionsPos },
 			explosionsTime: { type: 'fv1', value: this.explosionsTime },
 			explosionsIndex: { type: 'i', value: this.explosionsIndex },

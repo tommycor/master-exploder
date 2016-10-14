@@ -6,7 +6,7 @@ var config = {
 	
 	canvas: {
 		element : document.getElementById('container'),
-		color : 0x333333
+		color : 0x1a2033
 	},
 	
 	camera: {
@@ -23,14 +23,15 @@ var config = {
 	},
 
 	particles: {
-		count: 100000,
-		maxExplosions: 100
+		count: 500000,
+		maxExplosions: 100,
+		texture : "./assets/medias/smoke_3.png"
 	},
 
 	drawField: {
 		maxHeight: 600,
 		maxWidth: 600,
-		maxDepth: 200,
+		maxDepth: 150,
 		mitigator: .3
 	},
 

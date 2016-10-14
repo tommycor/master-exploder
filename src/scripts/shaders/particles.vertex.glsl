@@ -2,24 +2,21 @@
 #define MAX_DIST 200.
 #define MAX_Time 10.
 
-#define EXP_TIME_POWER 2.
-#define EXP_TIME_VELOCITY 2.
+#define EXP_TIME_POWER 30.
+#define EXP_TIME_VELOCITY 3.
 
-#define EXP_DIST_POWER 2.
-#define EXP_DIST_VELOCITY .04 //smallest number = bigger explosion
+#define EXP_DIST_POWER 10.
+#define EXP_DIST_VELOCITY .03 //smallest number = bigger explosion
 
 uniform float explosionsTime[ MAX_EXP ];
 uniform vec2 explosionsPos[ MAX_EXP ];
-
 uniform int explosionsIndex;
+
+varying float dist;
 
 attribute float size;
 
-varying float vInfluence;
-
 void main() {
-	vInfluence = .0;
-	float dist 		 = .0;
 	float timeFactor = .0;
 	float distFactor = .0;
 
@@ -32,11 +29,11 @@ void main() {
 			break;
 		}
 
-		dist 		= distance( vec3( explosionsPos[i], .0 ), newPosition );
+		dist = distance( vec3( explosionsPos[i], .0 ), newPosition );
 
 		if( dist <= MAX_DIST ) {
 			
-			director 	= newPosition - vec3( explosionsPos[i], .0 );
+			director 	= normalize( newPosition - vec3( explosionsPos[i], .0 ) );
 
 			// http://www.md.ucl.ac.be/didac/physique/didacphys/rappels/math/fonctions/expon.html#expon
 			// y = a . (1 - exp(-b . x))
