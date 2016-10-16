@@ -36,8 +36,8 @@ var config = {
 	},
 
 	plane: {
-		width: 500,
-		height: 500,
+		width: 700,
+		height: 700,
 		wireframe: true,
 		opacity: 0,
 	}

@@ -38,13 +38,13 @@ module.exports = {
 		this.container = config.canvas.element;
 
 		this.camera 		   = new THREE.PerspectiveCamera(45, this.ratio, 15, 2000);
-	    this.camera.position.x = config.camera.position.x;
-	    this.camera.position.y = config.camera.position.y;
-	    this.camera.position.z = config.camera.position.z;
-	    this.camera.lookAt(config.camera.target);
+		this.camera.position.x = config.camera.position.x;
+		this.camera.position.y = config.camera.position.y;
+		this.camera.position.z = config.camera.position.z;
+		this.camera.lookAt(config.camera.target);
 
 		if ( config.axisHelper ) {
-	    	this.axisHelper =  new THREE.AxisHelper( 5 );
+			this.axisHelper =  new THREE.AxisHelper( 5 );
 			this.scene.add( this.axisHelper );
 		}
 
@@ -97,14 +97,20 @@ module.exports = {
 
 			let j = i - i * config.drawField.mitigator;
 
-			let width  = maxWidth - stepX * j;
-			let height = maxWidth - stepY * j;
+			// let width  = maxWidth - stepX * j;
+			// let height = maxWidth - stepY * j;
 			let depth  = maxDepth - stepY * j;
 
-			let pX = Math.random() * ( width ) - width * .5;
-			let pY = Math.random() * ( height ) - height * .5;
+			// let pX = Math.random() * ( width ) - width * .5;
+			// let pY = Math.random() * ( height ) - height * .5;
+			// let pZ = Math.random() * ( depth ) - depth * .5;
+
+			let angle = Math.random() * Math.PI * 2;
+			let dist = Math.random()*Math.random()*maxWidth/2;
+
+			let pX = dist * Math.cos( angle );
+			let pY = dist * Math.sin( angle );
 			let pZ = Math.random() * ( depth ) - depth * .5;
-			// let pZ = 0;
 
 			this.vertices[i * 3] = pX;
 			this.vertices[i * 3 + 1] = pY;
@@ -169,7 +175,7 @@ module.exports = {
 		this.currentCameraPos.y += ( ( this.cameraPos.y * .8) - this.currentCameraPos.y ) * 0.01;
 
 		this.camera.position.set( this.currentCameraPos.x, this.currentCameraPos.y, this.currentCameraPos.z );
-	    this.camera.lookAt(config.camera.target);
+		this.camera.lookAt(config.camera.target);
 
 		this.renderer.render(this.scene, this.camera);
 	}
